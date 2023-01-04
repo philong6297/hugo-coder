@@ -35,6 +35,12 @@
         {{ if .Params.featuredImage }}
           <img src="{{ .Params.featuredImage | relURL }}" alt="Featured image"/>
         {{ end }}
+
+        {{ if and (.Params.toc) (gt .WordCount .Site.Params.tocMinWordCount ) }}
+          <h1> {{ i18n "toc" }}</h1>
+          {{ .TableOfContents }}
+        {{ end }}
+
         {{ .Content }}
       </div>
 
