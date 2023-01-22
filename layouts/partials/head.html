@@ -4,6 +4,32 @@
 <link rel="canonical" href="{{ .Permalink }}">
 {{ end }}
 
+{{ $customize := .Page.Params.customPage }}
+{{ if $customize.enabled }}
+  {{/*  Custom js per post  */}}
+  {{ range $customize.customJS }}
+    {{ if $.Site.IsServer }}
+      {{ $script := resources.Get . }}
+        <script class="longlp-server-custom-js" src="{{ $script.RelPermalink }}"></script>
+      {{ else }}
+      {{ $script := resources.Get . | minify | fingerprint }}
+        <script class="longlp-local-custom-js" src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+    {{ end }}
+  {{ end }}
+
+  {{/*  Custom css per post  */}}
+  {{ range $customize.customCSS }}
+    {{ if $.Site.IsServer }}
+      {{ $styles := resources.Get . }}
+      <link class="longlp-server-custom-css" rel="stylesheet" href="{{ $styles.RelPermalink }}" media="screen">
+    {{ else }}
+      {{ $styles := resources.Get . | minify | fingerprint }}
+      <link class="longlp-local-custom-css" rel="stylesheet" href="{{ $styles.RelPermalink }}" integrity="{{ $styles.Data.Integrity }}" crossorigin="anonymous" media="screen" />
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+
 {{ partialCached "head/theme-styles.html" . }}
 
 {{ partialCached "head/color-scheme.html" . }}
